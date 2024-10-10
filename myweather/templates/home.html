@@ -1,0 +1,138 @@
+{% extends "index.html" %}
+
+{% block title %}
+Weather
+{% endblock title %}
+
+{% block content %}
+<style>
+    body {
+        background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+        background-attachment: fixed;
+        background-size: cover;
+        font-family: 'Poppins', sans-serif;
+        color: white;
+    }
+
+    .container-fluid {
+        margin-top: 60px;
+        margin-bottom: 100px;
+    }
+
+    h3.page-header {
+        font-weight: bold;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+    }
+
+    .shadow {
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        padding: 20px;
+        border-radius: 10px;
+        background-color: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(5px);
+        color: white;
+    }
+
+    .input-group {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+    }
+
+    .input-group .btn-primary {
+        background-color: #4A90E2;
+        border: none;
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .media {
+        margin-bottom: 20px;
+    }
+
+    .media-object {
+        width: 60px;
+        height: 60px;
+    }
+
+    .media-body {
+        font-size: 16px;
+    }
+
+    .media-heading {
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+    }
+
+    .media-right a {
+        margin-left: 10px;
+    }
+
+    .alert {
+        background-color: rgba(255, 255, 255, 0.2);
+        border: none;
+        color: #fff;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    }
+
+    .fa-trash,
+    .fa-pencil {
+        color: black;
+        transition: transform 0.2s ease-in-out;
+    }
+
+    .fa-trash:hover,
+    .fa-pencil:hover {
+        transform: scale(1.2);
+    }
+</style>
+
+<div class="container-fluid">       
+    <div class="col-md-offset-4 col-md-4"> 
+        <h3 class="page-header text-center"><span class="fas fa-cloud-sun"></span> Weather Application</h3>
+
+        {% if messages %}
+        {% for message in messages %}
+            {% if message.tags == 'error'%}
+                <div class="alert alert-danger">
+                    {{ message }}
+                </div>
+            {% else %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>  
+            {% endif %}             
+        {% endfor %}
+        {% endif %} 
+
+        <form method="POST">
+            {% csrf_token %}
+            <div class="input-group">
+                {{form.name}}
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit"><span class="fa fa-add"></span> Add City</button>
+                </span>
+            </div>
+        </form>
+
+        {% for city_weather in data %}
+            <div class="shadow media">
+                <div class="media-left">
+                    <a href="#">
+                        <img src="http://openweathermap.org/img/w/{{city_weather.icon}}.png" class="media-object" alt="Image">
+                    </a>
+                </div>
+                <div class="media-body">
+                    <h3 class="media-heading"><b>{{city_weather.city}}</b></h3>                       
+                    <h4>{{city_weather.temperature}}&deg;C</h4>                       
+                    <h4>{{city_weather.description}}</h4>                       
+                    <h4>{{city_weather.country}}</h4> 
+                </div>
+                <div class="media-right">
+                    <h3>
+                        <a href="{% url 'ECity' city_weather.city %}" class="text-primary"><i class="fa fa-pencil" aria-hidden="true"></i></a>
+                        <a href="{% url 'DCity' city_weather.city %}" class="text-danger"><i class="fa fa-trash" aria-hidden="true"></i></a>
+                    </h3>
+                </div>
+            </div>
+        {% endfor %}    
+    </div>
+</div>
+{% endblock %}
